@@ -3,7 +3,9 @@ import Person from "@/assets/img/person.png";
 </script>
 
 <template>
-    <nav class="flex flex-col h-screen w-60 bg-sky-400 relative">
+    <nav
+        class="flex flex-col fixed top-0 left-0 z-40 h-screen transition-transform -translate-x-full sm:translate-x-0 w-60 bg-sky-400"
+    >
         <div class="mt-10">
             <h1 class="text-white font-bold text-3xl text-center">
                 SKILL<span class="text-sky-600">BOOK</span>
