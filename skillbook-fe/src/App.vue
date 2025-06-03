@@ -1,10 +1,10 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
-import CourseCard from "./components/student/CourseCard.vue";
+import { RouterView } from "vue-router";
+
 </script>
 
 <template>
-    <main>
-        <RouterView />
-    </main>
+  <main>
+    <RouterView />
+  </main>
 </template>

@@ -4,6 +4,17 @@ import DashboardView from "@/views/DashboardView.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+
+    {
+      path: "/test",
+      name: "test",
+      component: () => import("../components/student/RankingComponent.vue"),
+    },
+    {
+      path: "/",
+      name: "dashboard",
+      component: DashboardView,
+    },
     {
       path: "/",
       name: "dashboard",
@@ -30,11 +41,15 @@ const router = createRouter({
         },
         {
           path: "discover",
-          // component: () => import("../views/StudentDiscoverView.vue"),
+          component: () => import("../components/student/StudentDiscover.vue"),
         },
         {
           path: "courses",
-          // component: () => import("../views/StudentCoursesView.vue"),
+          component: () => import("../components/student/StudentCourse.vue"),
+        },
+        {
+          path: "courses/:id",
+          component: () => import("../components/student/CourseDetail.vue")
         },
         {
           path: "ranking",
