@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import DashboardView from "@/views/DashboardView.vue";
+import { check } from '../auth.js'
+import { useUserStore } from "../../stores/userStore.js";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,12 +10,7 @@ const router = createRouter({
     {
       path: "/test",
       name: "test",
-      component: () => import("../components/student/RankingComponent.vue"),
-    },
-    {
-      path: "/",
-      name: "dashboard",
-      component: DashboardView,
+      component: () => import("../components/student/LessonsPage.vue"),
     },
     {
       path: "/",
@@ -33,7 +30,7 @@ const router = createRouter({
     {
       path: "/student",
       name: "student",
-      component: () => import("../views/StudentDashboardView.vue"),
+      component: () => import("../views/MainDashboardView.vue"),
       children: [
         {
           path: "",
@@ -48,12 +45,25 @@ const router = createRouter({
           component: () => import("../components/student/StudentCourse.vue"),
         },
         {
-          path: "courses/:id",
-          component: () => import("../components/student/CourseDetail.vue")
+          path: "courses/:course",
+          component: () => import("../components/student/CourseDetail.vue"),
+          props: true
+        },
+        {
+          path: "courses/:course/lessons/:lesson/page/:page",
+          component: () => import("../components/student/LessonsPage.vue"),
+        },
+        {
+          path: "courses/:course/lessons/:lesson/quiz/:page",
+          component: () => import("../components/student/QuizPage.vue"),
+        },
+        {
+          path: "courses/:course/lessons/:lesson/quiz/result",
+          component: () => import("../components/student/QuizResult.vue"),
         },
         {
           path: "ranking",
-          // component: () => import("../views/StudentRankingView.vue"),
+          component: () => import("../components/student/StudentRanking.vue"),
         },
         {
           path: "profile",
@@ -61,15 +71,55 @@ const router = createRouter({
         },
       ],
     },
-    // {
-    //   path: "/about",
-    //   name: "about",
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import("../views/AboutView.vue"),
-    // },
+    {
+      path: "/teacher",
+      name: "teacher",
+      component: () => import("../views/MainDashboardView.vue"),
+      children: [
+        {
+          path: "",
+          component: () => import("../components/teacher/TeacherDashboard.vue"),
+        },
+        {
+          path: "courses",
+          component: () => import("../components/student/StudentDiscover.vue"),
+        },
+        {
+          path: "courses/:course",
+          component: () => import("../components/student/CourseDetail.vue"),
+        },
+        {
+          path: "courses/addcourse",
+          component: () => import("../components/teacher/TeacherAddCourse.vue"),
+        },
+        {
+          path: "courses/:course/lesson/addlesson",
+          component: () => import("../components/teacher/TeacherAddLessons.vue"),
+        },
+      ]
+    }
   ],
 });
+
+router.beforeEach(async (to, from) => {
+  const userStore = useUserStore()
+  const user = await check();
+  if (!user && to.name !== 'login' && to.name !== 'dashboard' && to.name !== 'register') {
+    return { name: 'login' }
+  }
+
+  if (user !== null) {
+    if (userStore !== null) {
+      userStore.setUser(user)
+    }
+
+    if (user.role === 'student' && to.name === 'teacher') {
+      return { name: 'student' }
+    }
+  }
+
+  return true
+
+})
 
 export default router;

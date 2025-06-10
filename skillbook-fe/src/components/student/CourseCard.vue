@@ -2,12 +2,14 @@
 import CourseImg from "@/assets/img/courseimage.png";
 import { RouterLink } from "vue-router";
 defineProps({
-  link: String
+  link: String,
+  title: String,
+  progress: Number
 })
 </script>
 
 <template>
-  <RouterLink :to="link" class="size-fit">
+  <RouterLink :to="`/student/courses/${link}`" class="size-fit">
     <div class="w-fit h-fit">
       <div class="flex flex-row bg-white rounded-md w-fit h-fit py-3 px-3 space-x-10">
         <div class="w-full">
@@ -18,14 +20,14 @@ defineProps({
             <p class="text-white font-bold text-xs py-2 px-3">CODING</p>
           </div>
           <div>
-            <h1 class="font-bold text-base">Introduction to Java</h1>
+            <h1 class="font-bold text-base">{{ title }}</h1>
           </div>
           <div class="flex flex-row w-60 justify-between mt-5">
             <div>
-              <p class="text-sky-300">0%</p>
+              <p class="text-sky-300">{{ progress }}%</p>
             </div>
             <div class="w-50 h-2.5 rounded-full outline-2 outline-black mt-2">
-              <div class="bg-sky-300 rounded-full h-2.5" style="width: 50%"></div>
+              <div class="bg-sky-300 rounded-full h-2.5" :style="`width: ${progress}%`"></div>
             </div>
           </div>
         </div>

@@ -2,43 +2,54 @@
 
 namespace Database\Factories;
 
+use App\Models\Course;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = User::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function definition()
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'role' => 'teacher',
+            'level' => 0,
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => 'Noval1234', // password
             'remember_token' => Str::random(10),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    public function configure()
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->afterCreating(function (User $user) {
+            // Create 3 Courses and attach them to the user via the pivot table
+            $courses = Course::factory()->count(3)->create();
+            $user->courses()->attach($courses);
+
+            $courses->each(function ($course) {
+                // Create 3 Lessons for each Course
+                \App\Models\Lessons::factory()->count(3)->create(['course_id' => $course->course_id])
+                    ->each(function ($lesson) {
+                        // Create 3 LessonPages for each Lesson
+                        \App\Models\LessonsPage::factory()->count(3)->sequence(
+                            ['page' => 1],
+                            ['page' => 2],
+                            ['page' => 3]
+                        )->create(['lessons_id' => $lesson->lessons_id]);
+
+                        // Create 3 Quizzes for each Lesson
+                        \App\Models\Quiz::factory()->count(3)->sequence(
+                            ['page' => 1],
+                            ['page' => 2],
+                            ['page' => 3]
+                        )->create(['lessons_id' => $lesson->lessons_id]);
+                    });
+            });
+        });
     }
 }

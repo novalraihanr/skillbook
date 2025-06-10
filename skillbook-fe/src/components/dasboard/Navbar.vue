@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from 'vue-router';
 
 </script>
 
@@ -15,7 +16,7 @@
         <a href="#about" class="text-black">about</a>
         <a href="#contact" class="text-black">contact</a>
         <div>
-          <a href="#register" class="text-white bg-sky-400 rounded-md p-2">register</a>
+          <RouterLink to="login" class="text-white bg-sky-400 rounded-md p-2">login</RouterLink>
         </div>
       </div>
     </div>
